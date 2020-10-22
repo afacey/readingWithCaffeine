@@ -35,45 +35,12 @@ class App extends Component {
       this.setState({ showSuggestions: true });
     }
 
-    // store user input for later
+    // store user input to set in state
     const libraryInput = event.target.value;
-
-    // this.setState(stateToSet, callBackOnce-StateToSet-isComplete)
 
     // update state with the libraryInput
     // then call api to get search ahead (predictive) results
-    this.setState({ libraryInput }, () => {
-      // if libraryInput is between 3 and 25 characters make a call to the api
-      // api does not allow a call for less than 3 characters
-      if (libraryInput.length >= 3 && libraryInput.length < 25) {
-        const apiKey = 'dgYN9vqDVgOBOwNtvPlR14jKSxdi9dVa';
-
-        // make axios call to get autoComplete text of the user's input
-        axios({
-          url: 'https://www.mapquestapi.com/search/v3/prediction',
-          params: {
-            q: this.state.libraryInput,
-            collection: 'poi',
-            key: apiKey,
-          },
-        }).then((res) => {
-          //update autoComplete state with the returned search ahead results
-          this.setState({ autoComplete: [...res.data.results] });
-        })
-        .catch(error => {
-          // if there's an error with the api call display an alert
-          Swal.fire({
-            title: 'Network Error',
-            text: 'Try searching at a later time.',
-            icon: 'warning',
-            confirmButtonText: 'Okay',
-          })
-        })
-      } else if (libraryInput.length < 3) {
-        // if libraryInput is less than 3 hide the autocomplete results
-        this.setState({ showSuggestions: false });
-      }
-    });
+    this.setState({ libraryInput }, this.getPredictiveSearch);
   };
 
   // method to handle the user selecting (onClick) an autocomplete result
@@ -82,38 +49,27 @@ class App extends Component {
     const userSelectedLibrary = event.target.value;
 
     // map over the autoComplete array in state to return the properties of the userSelectedLibrary
-    const finalLibrary = this.state.autoComplete.filter(
-      (item) => item.name === userSelectedLibrary
-    );
+    const finalLibrary = this.state.autoComplete.filter((item) => item.name === userSelectedLibrary)[0];
 
     // gather ther library's name, latitude, and longitude to be used for location searching
-    const userSelectedLibraryLatitude =
-      finalLibrary[0].place.geometry.coordinates[1];
-    const userSelectedLibraryLongitude =
-      finalLibrary[0].place.geometry.coordinates[0];
-    const userSelectedLibraryName = finalLibrary[0].name;
+    const { name  } = finalLibrary;
+    const [ longitude, latitude ] = finalLibrary.place.geometry.coordinates;
 
     // store the library's name, latitude, and longitude in object
     const selectedLibrary = {
-      name: userSelectedLibraryName,
-      latitude: userSelectedLibraryLatitude,
-      longitude: userSelectedLibraryLongitude,
+      name,
+      latitude,
+      longitude,
     };
 
     // update state with the selectedLibrary object
-    this.setState(
-      {
-        selectedLibrary,
-
-      },
-      () => {
-        // then update the library input to the userSelectedLibraryName, and hide the autocomplete list
-        this.setState({
-          libraryInput: userSelectedLibraryName,
-          showSuggestions: false,
-        });
-      }
-    );
+    this.setState({selectedLibrary}, () => {
+      // then update the library input to the userSelectedLibraryName, and hide the autocomplete list
+      this.setState({
+        libraryInput: name,
+        showSuggestions: false,
+      });
+    });
   };
 
   // method to handle user submitting the library name and distance to find surrounding coffee shops
@@ -156,6 +112,40 @@ class App extends Component {
         // else (user clicked on autocomplete suggestion), make api call to get the surrounding coffee shops
         : this.getCoffeeShops();
   };
+
+  // make api call to get prective search of user's search input
+  getPredictiveSearch = () => {
+    const { libraryInput } = this.state;
+
+    if (libraryInput.length >= 3 && libraryInput.length < 25) {
+      const apiKey = 'dgYN9vqDVgOBOwNtvPlR14jKSxdi9dVa';
+
+      // make axios call to get autoComplete text of the user's input
+      axios({
+        url: 'https://www.mapquestapi.com/search/v3/prediction',
+        params: {
+          q: libraryInput,
+          collection: 'poi',
+          key: apiKey,
+        },
+      }).then((res) => {
+        //update autoComplete state with the returned search ahead results
+        this.setState({ autoComplete: [...res.data.results] });
+      })
+      .catch(error => {
+        // if there's an error with the api call display an alert
+        Swal.fire({
+          title: 'Oops!',
+          text: `There was an error! ${error}. Try searching at a later time.`,
+          icon: 'warning',
+          confirmButtonText: 'OK',
+        })
+      })
+    } else if (libraryInput.length < 3) {
+      // if libraryInput is less than 3 hide the autocomplete results
+      this.setState({ showSuggestions: false });
+    }
+  }
 
   // getting surrounding coffee shops of the selected library and storing them in state
   getCoffeeShops = () => {
@@ -218,27 +208,23 @@ class App extends Component {
 
   // get the static map of the coffeeShops and the selectedLibrary and update the map image
   displayCoffeeShops = () => {
-    const apiKey = 'dgYN9vqDVgOBOwNtvPlR14jKSxdi9dVa';
-    const radiusDistance = this.state.selectedRadius;
-
-    // map over stored coffeeShops and return the coordinates string needed for the static map API call
-    // ex. ['43.653427,-79.380764|marker-md-1|', '43.650378,-79.380355|marker-md-2|']
+    const { selectedRadius, coffeeShops, selectedLibrary: { latitude, longitude } } = this.state;
     
-    const coffeeShopCoords = this.state.coffeeShops.map(
-      (coffeeShop, index) => {
-        const [long, lat] = coffeeShop.place.geometry.coordinates;
-        return `${lat},${long}|marker-md-${index + 1}|`;
-      }
-    );
-
-    // join the array with '|' in between
-    const joinedCoffeeShopCoords = coffeeShopCoords.join('|');
-
+    // reduce stored coffeeShops to a coordinates string needed for the static map API call
+    // ex. ['43.653427,-79.380764|marker-md-1|', '43.650378,-79.380355|marker-md-2|']
+    const coffeeShopCords = coffeeShops.reduce((cordsString, coffeeShop, index) => {
+      const [longitude, latitude] = coffeeShop.place.geometry.coordinates;
+      cordsString += `${latitude},${longitude}|marker-md-${index + 1}||`; 
+      
+      return cordsString
+    }, "")
+    
     // construct the selectedLibrary marker's string
-    const libraryMarker = `${this.state.selectedLibrary.latitude},${this.state.selectedLibrary.longitude}|marker-md-350482||`;
-
+    const libraryMarker = `${latitude},${longitude}|marker-md-350482||`;
+    
     // store the static map url to update the displayedMap in state
-    const mapWithoutRoute = `https://www.mapquestapi.com/staticmap/v5/map?key=${apiKey}&scalebar=true|bottom&locations=${libraryMarker}${joinedCoffeeShopCoords}&size=500,600&type=light&shape=radius:${radiusDistance}km|${this.state.selectedLibrary.latitude},${this.state.selectedLibrary.longitude}`;
+    const apiKey = 'dgYN9vqDVgOBOwNtvPlR14jKSxdi9dVa';
+    const mapWithoutRoute = `https://www.mapquestapi.com/staticmap/v5/map?key=${apiKey}&scalebar=true|bottom&locations=${libraryMarker}${coffeeShopCords}&size=500,600&type=light&shape=radius:${selectedRadius}km|${latitude},${longitude}`;
 
     // update the displayedMap's state with the constructed src url
     this.setState({
@@ -273,20 +259,17 @@ class App extends Component {
     // filter the selected coffeeShop from state
     const finalCoffeeShop = this.state.coffeeShops.filter(
       (item) => item.id === userSelectedCoffeeShop
-    );
+    )[0];
 
     // gather the selectedCoffeeShop name, latitude, and longitude for later
-    const userSelectedCoffeeShopLatitude =
-      finalCoffeeShop[0].place.geometry.coordinates[1];
-    const userSelectedCoffeeShopLongitude =
-      finalCoffeeShop[0].place.geometry.coordinates[0];
-    const userSelectedCoffeeShopName = finalCoffeeShop[0].name;
-
+    const { name } = finalCoffeeShop;
+    const [ longitude, latitude ] = finalCoffeeShop.place.geometry.coordinates;
+    
     // store the selectedCoffeeShop name, latitude, and longitude in an object
     const selectedCoffeeShop = {
-      name: userSelectedCoffeeShopName,
-      latitude: userSelectedCoffeeShopLatitude,
-      longitude: userSelectedCoffeeShopLongitude,
+      name,
+      latitude,
+      longitude,
     }
 
     // set coffeeShopClicked to false to update state later
