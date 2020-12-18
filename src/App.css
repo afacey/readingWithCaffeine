@@ -305,7 +305,8 @@ form input {
   align-items: center;
   width: 50%;
   margin-right: 10px;
-  overflow: hidden
+  overflow: hidden;
+  position: relative;
 }
 
 .map img {
@@ -324,13 +325,18 @@ form input {
   justify-content: center;
   align-items: center;
   width: 100%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background-color: #350482;
 }
 
 .loadingSpinner {
   height: 75px;
   width: 75px;
   border: 20px solid #ffe1f9;
-  border-top: 20px solid #350482;
+  /* border-top: 20px solid #350482; */
+  border-top: 20px solid #b20061;
   border-radius: 50%;
   animation: spin 2s linear infinite; 
 }
@@ -392,13 +398,22 @@ form input {
 }
 
 /* Transportations and directions -------------------- */
+.transportationAndDirections {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 45%;
+  margin-left: 10px;
+}
+
 .directionsToCoffeeShopOl {
   overflow: auto;
   max-height: 300px;
+  list-style-position: inside;
 }
 
-.transportation + ol {
-  list-style-position: inside;
+.transportationAndDirections h2 {
+  margin: 30px 0;
 }
 
 .transportationAndDirections ol li:not(:last-child) {
@@ -494,10 +509,15 @@ footer p {
     flex-direction: column;
     align-items: center;
   }
+
+  .map {
+    margin: 0;
+  }
   
-  .coffeeShops {
+  .coffeeShops,
+  .transportationAndDirections {
     width: 100%;
-    margin-right: 0;
+    margin-left: 0;
   }
 
   .transportationButton { 
