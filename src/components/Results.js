@@ -35,7 +35,7 @@ class Results extends Component {
 
     
     if (arraysAreEqual(prevProps.coffeeShops, this.props.coffeeShops) === false) {
-      this.setState({ displayDirections: false })
+      this.setState({ displayDirections: false, isLoading: true })
     }
 
     if (this.props.coffeeShops && this.props.coffeeShops.length > 0) {

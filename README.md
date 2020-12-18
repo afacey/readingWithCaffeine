@@ -14,7 +14,7 @@ The client is an avid reader who regularly takes out books from their local publ
 
 ## Tools used
 
-React, HTML, CSS, Mapquest API
+React, Redux, HTML, CSS, Mapquest API
 
 ## Requirements
 
