@@ -1,23 +1,23 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "89fe727d3c377e53672ec691db39fd94",
+    "revision": "657a40c976fd9979b4d41de92a2b3a26",
     "url": "/readingWithCaffeine/index.html"
   },
   {
-    "revision": "df4caf8f6353f5750c14",
-    "url": "/readingWithCaffeine/static/css/main.9f55fb5e.chunk.css"
+    "revision": "ade5877f2e7274a2a352",
+    "url": "/readingWithCaffeine/static/css/main.3aca8792.chunk.css"
   },
   {
-    "revision": "b0593ce62a7a429dffc4",
-    "url": "/readingWithCaffeine/static/js/2.5dbd0cdf.chunk.js"
+    "revision": "485166017b51a1c94a08",
+    "url": "/readingWithCaffeine/static/js/2.ce8c8890.chunk.js"
   },
   {
     "revision": "c64c486544348f10a6d6c716950bc223",
-    "url": "/readingWithCaffeine/static/js/2.5dbd0cdf.chunk.js.LICENSE.txt"
+    "url": "/readingWithCaffeine/static/js/2.ce8c8890.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "df4caf8f6353f5750c14",
-    "url": "/readingWithCaffeine/static/js/main.5949fcd4.chunk.js"
+    "revision": "ade5877f2e7274a2a352",
+    "url": "/readingWithCaffeine/static/js/main.c1a85a99.chunk.js"
   },
   {
     "revision": "4ce24b48c8ad9aded873",
