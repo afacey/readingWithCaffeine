@@ -1,19 +1,19 @@
 {
   "files": {
     "main.css": "/readingWithCaffeine/static/css/main.3aca8792.chunk.css",
-    "main.js": "/readingWithCaffeine/static/js/main.c1a85a99.chunk.js",
+    "main.js": "/readingWithCaffeine/static/js/main.dee996a2.chunk.js",
     "runtime-main.js": "/readingWithCaffeine/static/js/runtime-main.00093b2b.js",
-    "static/js/2.ce8c8890.chunk.js": "/readingWithCaffeine/static/js/2.ce8c8890.chunk.js",
+    "static/js/2.0e8f0f41.chunk.js": "/readingWithCaffeine/static/js/2.0e8f0f41.chunk.js",
     "index.html": "/readingWithCaffeine/index.html",
-    "precache-manifest.cc13683e04da41436e6be1dd8abd4dca.js": "/readingWithCaffeine/precache-manifest.cc13683e04da41436e6be1dd8abd4dca.js",
+    "precache-manifest.789b72945db466fcf85184ae48dbffe0.js": "/readingWithCaffeine/precache-manifest.789b72945db466fcf85184ae48dbffe0.js",
     "service-worker.js": "/readingWithCaffeine/service-worker.js",
-    "static/js/2.ce8c8890.chunk.js.LICENSE.txt": "/readingWithCaffeine/static/js/2.ce8c8890.chunk.js.LICENSE.txt",
+    "static/js/2.0e8f0f41.chunk.js.LICENSE.txt": "/readingWithCaffeine/static/js/2.0e8f0f41.chunk.js.LICENSE.txt",
     "static/media/App.css": "/readingWithCaffeine/static/media/thomas-park-unsplash.ff474788.png"
   },
   "entrypoints": [
     "static/js/runtime-main.00093b2b.js",
-    "static/js/2.ce8c8890.chunk.js",
+    "static/js/2.0e8f0f41.chunk.js",
     "static/css/main.3aca8792.chunk.css",
-    "static/js/main.c1a85a99.chunk.js"
+    "static/js/main.dee996a2.chunk.js"
   ]
 }
