@@ -4,6 +4,12 @@ import * as api from '../api';
 
 import { connect } from 'react-redux';
 import { getCoffeeShops } from '../actions/libraryActions';
+
+// const mapStateToProps = state => ({
+//   library: state.library,
+//   coffeeShops: state.coffeeShops.list
+// })
+
 class Form extends Component {
   constructor() {
     super();
@@ -65,47 +71,68 @@ class Form extends Component {
     }
   }
 
+  validateFormValues = () => {
+    const { libraryInput, selectedLibrary, selectedRadius } = this.state;
+
+    if (libraryInput === "" || libraryInput !== selectedLibrary.name) {
+      Swal.fire({
+        title: 'Unable to search for coffee shops',
+        text: 'Location input must be valid',
+        icon: 'warning',
+        confirmButtonText: 'OK',
+      })
+      return false;
+    }
+
+    if (selectedRadius < 1 || selectedRadius > 20) {
+      Swal.fire({
+        title: 'Unable to search for coffee shops',
+        text: 'Maximum distance must be a value between 1 and 20.',
+        icon: 'warning',
+        confirmButtonText: 'OK',
+      })
+      return false;
+    }
+
+    else if (!selectedLibrary.name) {
+      Swal.fire({
+        title: 'Unable to search for coffee shops',
+        text: 'A location must be selected',
+        icon: 'warning',
+        confirmButtonText: 'OK',
+      })
+      return false;
+    }
+
+    else {
+      return true;
+    }
+  }
+
   // method to handle user submitting the library name and distance to find surrounding coffee shops
   handleFormSubmit = (event) => {
     // prevent form from refreshing page on submit
     event.preventDefault();
+    
+    if (this.validateFormValues()) {
+      const { selectedLibrary, selectedRadius } = this.state;
 
-    const { autoComplete, libraryInput, selectedLibrary, selectedRadius } = this.state;
-
-    // if user's libraryInput is less than 3 characters display an alert
-    if (libraryInput.length < 3) {
-      Swal.fire({
-        title: 'No results',
-        text: 'Library name must be greater than 3 characters.',
-        icon: 'warning',
-        confirmButtonText: 'Okay',
+      const library = {
+        ...selectedLibrary,
+        radius: selectedRadius
+      }
+  
+      this.props.dispatch({
+        type: 'SET_LIBRARY',
+        payload: library
       })
+  
+      // this.setState({ showSuggestions: false}, () => {
+      // });    
+      
+      this.props.dispatch(getCoffeeShops(library))
     }
 
-    // if there are no autoComplete results OR the selected radius distance is less than 1 or greater than 20
-    // display an alert
-    if (autoComplete.length === 0 || selectedRadius < 1 || selectedRadius > 20) {
-      Swal.fire({
-        title: 'No results',
-        text: 'Try another search.',
-        icon: 'warning',
-        confirmButtonText: 'Okay',
-      })
-    }
-
-    const library = {
-      ...selectedLibrary,
-      radius: selectedRadius
-    }
-
-    this.props.dispatch({
-      type: 'SET_LIBRARY',
-      payload: library
-    })
-
-    this.setState({ showSuggestions: false}, () => {
-      this.props.dispatch(getCoffeeShops(this.props.library))
-    });    
   };
 
   // method to handle the user selecting (onClick) an autocomplete result
@@ -117,14 +144,16 @@ class Form extends Component {
     const [ library ] = this.state.autoComplete.filter((item) => item.name === userSelectedLibrary);
 
     // gather ther library's name, latitude, and longitude to be used for location searching
-    const { name  } = library;
+    const { name, displayString  } = library;
     const [ longitude, latitude ] = library.place.geometry.coordinates;
+    const address = displayString.split(`${name}, `)[1];
 
     // store the library's name, latitude, and longitude in object
     const selectedLibrary = {
       name,
       latitude,
       longitude,
+      address
     };
 
     this.setState({ 
@@ -160,6 +189,8 @@ class Form extends Component {
             // if showSuggestions is true then display the list of autoCompleteResults
               <ul className='inputLocationAutoComplete'>
                 {
+                  autoComplete.length 
+                  ? 
                   autoComplete.map((results) => {
                     return (
                       <li key={results.id} className='autoCompleteResults'>
@@ -174,6 +205,9 @@ class Form extends Component {
                       </li>
                     );
                   })
+                  : <li className='autoCompleteResults'>
+                  <button type='button' onClick={ () => this.setState({ libraryInput: '', showSuggestions: false })}>No results found. Click to clear search.</button>
+                </li>
                 }
               </ul>}
           </div>
@@ -185,7 +219,7 @@ class Form extends Component {
             type='number'
             id='inputRadius'
             className='inputRadius'
-            min='0'
+            min='1'
             max='20'
             value={selectedRadius}
             onChange={handleRadiusSelected}
@@ -203,9 +237,5 @@ class Form extends Component {
   }
 }    
 
-const mapStateToProps = state => ({
-  library: state.library,
-  coffeeShops: state.coffeeShops.list
-})
-
-export default connect(mapStateToProps)(Form);
+// export default Form;
+export default connect()(Form);

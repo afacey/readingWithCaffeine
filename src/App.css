@@ -132,7 +132,12 @@ header {
   padding-bottom: 15px;
 }
 
-.instructionsSection p:not(:last-child) {
+.instructionsSection li {
+  list-style-position: inside;
+}
+
+.instructionsSection p,
+.instructionsSection li:not(:last-child) {
     padding-bottom: 10px;
 }
 
@@ -358,6 +363,23 @@ form input {
   padding: 20px 0;
 }
 
+.coffeeShops .library {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.coffeeShops .libraryName {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.coffeeShops .markerImg {
+  width: 28px;
+  height: 35px;
+  margin-right: 10px;
+}
+
 .coffeeShopsContainer {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -413,7 +435,16 @@ form input {
 }
 
 .transportationAndDirections h2 {
-  margin: 30px 0;
+  margin: 30px 0 15px;
+}
+
+.transportationAndDirections .coffeeShop {
+  margin-bottom: 30px;
+}
+
+.transportationAndDirections .coffeeShopName {
+  font-weight: 600;
+  margin-bottom: 5px;
 }
 
 .transportationAndDirections ol li:not(:last-child) {

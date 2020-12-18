@@ -13,8 +13,11 @@ const Directions = (props) => {
 	return (
 		<div className='transportationAndDirections'>
 			<button className='transportationButton' onClick={handleBackButton}>⬅ to Coffee Shops</button>
-			<h2>Directions to {directions.location.name}</h2>
-
+			<h2>Directions to:</h2>
+			<div className="coffeeShop">
+				<p className="coffeeShopName">{directions.location.name}</p>
+				<p className="coffeeShopAddress">{directions.location.address}</p>
+			</div>
 			<div className='directionMarkers' aria-hidden='true'>
 				<div className='directionMarkerContainer'>
 					<img src='https://assets.mapquestapi.com/icon/v2/marker-start.png' alt='' />

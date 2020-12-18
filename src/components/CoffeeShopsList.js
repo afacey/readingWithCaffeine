@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import marker from '../assets/marker.png';
 
 const mapStateToProps = state => ({
   coffeeShops: state.coffeeShops.list,
@@ -7,11 +8,18 @@ const mapStateToProps = state => ({
 })
 
 const CoffeeShopsList = (props) => {
-  const { coffeeShops, handleCoffeeShopSelected } = props
+  const { library, coffeeShops, handleCoffeeShopSelected } = props
 
   return (      
     <div className='coffeeShops'>
-      <h2>Coffee Shops In The Area</h2>
+      <h2>Coffee Shops In The Area:</h2>
+      <div className="library">
+        <img className="markerImg" src={marker} alt="" />
+        <div>
+          <p className="libraryName">{ library.name }</p>
+          <p className="libraryAddress">{ library.address }</p>
+        </div>
+      </div>
       <ol className='coffeeShopsContainer'>
         {
           coffeeShops.map((results, index) => {

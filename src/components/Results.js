@@ -58,6 +58,7 @@ class Results extends Component {
           name: locationListItem.name,
           longitude: locationListItem.place.geometry.coordinates[0],
           latitude: locationListItem.place.geometry.coordinates[1],
+          address: locationListItem.displayString.split(`${locationListItem.name}, `)[1]
         }
       }
 
