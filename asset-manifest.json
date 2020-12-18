@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/readingWithCaffeine/static/css/main.9f55fb5e.chunk.css",
-    "main.js": "/readingWithCaffeine/static/js/main.97f08808.chunk.js",
-    "main.js.map": "/readingWithCaffeine/static/js/main.97f08808.chunk.js.map",
+    "main.js": "/readingWithCaffeine/static/js/main.5949fcd4.chunk.js",
+    "main.js.map": "/readingWithCaffeine/static/js/main.5949fcd4.chunk.js.map",
     "runtime-main.js": "/readingWithCaffeine/static/js/runtime-main.00093b2b.js",
     "runtime-main.js.map": "/readingWithCaffeine/static/js/runtime-main.00093b2b.js.map",
     "static/js/2.5dbd0cdf.chunk.js": "/readingWithCaffeine/static/js/2.5dbd0cdf.chunk.js",
     "static/js/2.5dbd0cdf.chunk.js.map": "/readingWithCaffeine/static/js/2.5dbd0cdf.chunk.js.map",
     "index.html": "/readingWithCaffeine/index.html",
-    "precache-manifest.48cda3db28f37e6fd5e1867c220a27e9.js": "/readingWithCaffeine/precache-manifest.48cda3db28f37e6fd5e1867c220a27e9.js",
+    "precache-manifest.fb3f4a9a052db899666bc414df008a15.js": "/readingWithCaffeine/precache-manifest.fb3f4a9a052db899666bc414df008a15.js",
     "service-worker.js": "/readingWithCaffeine/service-worker.js",
     "static/css/main.9f55fb5e.chunk.css.map": "/readingWithCaffeine/static/css/main.9f55fb5e.chunk.css.map",
     "static/js/2.5dbd0cdf.chunk.js.LICENSE.txt": "/readingWithCaffeine/static/js/2.5dbd0cdf.chunk.js.LICENSE.txt",
@@ -18,6 +18,6 @@
     "static/js/runtime-main.00093b2b.js",
     "static/js/2.5dbd0cdf.chunk.js",
     "static/css/main.9f55fb5e.chunk.css",
-    "static/js/main.97f08808.chunk.js"
+    "static/js/main.5949fcd4.chunk.js"
   ]
 }
