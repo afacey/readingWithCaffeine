@@ -2,7 +2,7 @@ import Swal from 'sweetalert2';
 import * as api from '../api';
 import { randomizeArrayItems } from '../helpers';
 
-import { GET_COFFEE_SHOPS } from './types';
+import { GET_COFFEE_SHOPS, RANDOMIZE_COFFEE_SHOPS } from './types';
 
  // getting surrounding coffee shops of the selected library and storing them in state
 export const getCoffeeShops = (location) => dispatch => {
@@ -25,6 +25,7 @@ export const getCoffeeShops = (location) => dispatch => {
         dispatch({
           type: GET_COFFEE_SHOPS,
           payload: {
+            all: returnedCoffeeShops,
             list: randomCoffeeShops,
             map: api.getRadiusMap(location, randomCoffeeShops)
           }
@@ -40,4 +41,16 @@ export const getCoffeeShops = (location) => dispatch => {
         confirmButtonText: 'OK',
       });
     });
+}
+
+export const randomizeCoffeeShops = (location, coffeeShops) => dispatch => {
+  const randomCoffeeShops = randomizeArrayItems(coffeeShops).splice(0, 10);
+  
+  dispatch({
+    type: RANDOMIZE_COFFEE_SHOPS,
+    payload: {
+      list: randomCoffeeShops,
+      map: api.getRadiusMap(location, randomCoffeeShops)
+    }
+  })
 }

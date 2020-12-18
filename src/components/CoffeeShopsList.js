@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import marker from '../assets/marker.png';
+import marker from './../assets/marker.png';
 
 const mapStateToProps = state => ({
   coffeeShops: state.coffeeShops.list,

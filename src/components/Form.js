@@ -3,13 +3,12 @@ import Swal from 'sweetalert2';
 import * as api from '../api';
 
 import { connect } from 'react-redux';
-import { getCoffeeShops } from '../actions/libraryActions';
+import { getCoffeeShops, randomizeCoffeeShops } from '../actions/libraryActions';
 
-// const mapStateToProps = state => ({
-//   library: state.library,
-//   coffeeShops: state.coffeeShops.list
-// })
-
+const mapStateToProps = state => ({
+  library: state.library,
+  coffeeShops: state.coffeeShops
+})
 class Form extends Component {
   constructor() {
     super();
@@ -31,6 +30,12 @@ class Form extends Component {
 
     // store user input to set in state
     const libraryInput = event.target.value;
+
+    // prevent unnecessary api calls if no results are found with previous input
+    if (libraryInput.length > 3 && this.state.autoComplete.length === 0) {
+      this.setState({ libraryInput })
+      return;
+    }
 
     // update state with the libraryInput
     // then call api to get search ahead (predictive) results
@@ -121,18 +126,20 @@ class Form extends Component {
         ...selectedLibrary,
         radius: selectedRadius
       }
-  
-      this.props.dispatch({
-        type: 'SET_LIBRARY',
-        payload: library
-      })
-  
-      // this.setState({ showSuggestions: false}, () => {
-      // });    
-      
-      this.props.dispatch(getCoffeeShops(library))
-    }
 
+      if (JSON.stringify(library) === JSON.stringify(this.props.library)) {
+        this.props.dispatch(randomizeCoffeeShops(library, this.props.coffeeShops.all));
+      } 
+      
+      else {
+        this.props.dispatch({
+          type: 'SET_LIBRARY',
+          payload: library
+        })
+    
+        this.props.dispatch(getCoffeeShops(library))
+      }
+    }
   };
 
   // method to handle the user selecting (onClick) an autocomplete result
@@ -238,4 +245,4 @@ class Form extends Component {
 }    
 
 // export default Form;
-export default connect()(Form);
+export default connect(mapStateToProps)(Form);

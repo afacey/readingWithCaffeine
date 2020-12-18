@@ -3,7 +3,7 @@ import axios from 'axios';
 // make api call to get prective search of user's search input
 export const getPredictiveSearch = input => {
 
-  if (input.length >= 3 && input.length < 25) {
+  if (input.length >= 3 && input.length < 50) {
     const apiKey = 'dgYN9vqDVgOBOwNtvPlR14jKSxdi9dVa';
 
     // make axios call to get autoComplete text of the user's input
