@@ -1,12 +1,20 @@
+import { Dispatch } from 'redux';
 import Swal from 'sweetalert2';
 import * as api from '../api';
 import { randomizeArrayItems } from '../helpers';
+import { CoffeeShop, CoffeeShopsState } from '../types/coffeeShop';
+import { Library } from '../types/library';
 
 import { GET_COFFEE_SHOPS, RANDOMIZE_COFFEE_SHOPS } from './types';
 
- // getting surrounding coffee shops of the selected library and storing them in state
-export const getCoffeeShops = (location) => dispatch => {
-  
+interface IGetCoffeeShops {
+  type: string;
+  payload: CoffeeShopsState
+}
+
+// getting surrounding coffee shops of the selected library and storing them in state
+export const getCoffeeShops = (location: Library) => (dispatch: Dispatch<IGetCoffeeShops>) => {
+
   api.getCoffeeShops(location)
     .then((response) => {
       // store returned results for later
@@ -16,9 +24,9 @@ export const getCoffeeShops = (location) => dispatch => {
       if (returnedCoffeeShops.length === 0) {
         throw new Error('No coffee shops found')
       } else {
-        
+
         const randomCoffeeShops = randomizeArrayItems(returnedCoffeeShops);
-        
+
         randomCoffeeShops.splice(10);
 
         // store the randomCoffeeShops in state, and then display them
@@ -43,9 +51,9 @@ export const getCoffeeShops = (location) => dispatch => {
     });
 }
 
-export const randomizeCoffeeShops = (location, coffeeShops) => dispatch => {
+export const randomizeCoffeeShops = (location: Library, coffeeShops: CoffeeShop[]) => (dispatch: Dispatch) => {
   const randomCoffeeShops = randomizeArrayItems(coffeeShops).splice(0, 10);
-  
+
   dispatch({
     type: RANDOMIZE_COFFEE_SHOPS,
     payload: {

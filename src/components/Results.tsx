@@ -7,8 +7,18 @@ import * as api from '../api';
 import { connect } from 'react-redux';
 import { SET_DIRECTIONS_INSTRUCTIONS, SET_DIRECTIONS_LOCATION } from '../actions/types';
 import { arraysAreEqual } from '../helpers';
+import { CoffeeShop, CoffeeShopsState } from '../types/coffeeShop';
+import { Library } from '../types/library';
+import { CoffeeShopLocation, Directions as DirectionsType, TransportationMode } from '../types/directions';
+import { Dispatch } from 'redux';
 
-const mapStateToProps = state => ({
+interface IMapState {
+  coffeeShops: CoffeeShopsState;
+  directions: DirectionsType;
+  library: Library;
+}
+
+const mapStateToProps = (state: IMapState) => ({
   coffeeShops: state.coffeeShops.list,
   radiusMap: state.coffeeShops.map,
   directionsMap: state.directions.map,
@@ -17,39 +27,53 @@ const mapStateToProps = state => ({
   modeType: state.directions.mode,
 })
 
-class Results extends Component {
-  constructor() {
-    super();
+interface IProps {
+  coffeeShops: CoffeeShop[];
+  radiusMap: string;
+  directionsMap: string;
+  selectedLibrary: Library;
+  selectedCoffeeShop: CoffeeShopLocation;
+  modeType: TransportationMode;
+  dispatch: Dispatch;
+}
+
+interface IState {
+  displayDirections: boolean;
+  isLoading: boolean;
+}
+
+class Results extends Component<IProps, IState> {
+  constructor(props: IProps) {
+    super(props);
 
     this.state = {
       displayDirections: false,
       isLoading: true, // detect whether map is loading for spinner
     }
   }
-  
-  componentDidUpdate(prevProps) {
-    
+
+  componentDidUpdate(prevProps: IProps) {
     if (prevProps.modeType !== this.props.modeType || JSON.stringify(prevProps.selectedCoffeeShop) !== JSON.stringify(this.props.selectedCoffeeShop)) {
       this.setState({ isLoading: true }, this.getSelectedTransportation);
     }
 
-    
+
     if (arraysAreEqual(prevProps.coffeeShops, this.props.coffeeShops) === false) {
       this.setState({ displayDirections: false, isLoading: true })
     }
 
     if (this.props.coffeeShops && this.props.coffeeShops.length > 0) {
-      const mapAndResults = document.querySelector('#mapAndResults');
+      const mapAndResults = document.querySelector('#mapAndResults')!;
       mapAndResults.scrollIntoView();
     }
 
   }
 
   // handle button click to go back to the list of surrounding coffeeShops
-  handleBackButton = () => this.setState({ displayDirections: false});
+  handleBackButton = () => this.setState({ displayDirections: false });
 
   // handle when the user selects a coffee shop from the list to get the directions
-  handleCoffeeShopSelected = (event) => {
+  handleCoffeeShopSelected = (event: React.SyntheticEvent<HTMLButtonElement>) => {
     const selectedLocationId = event.currentTarget.value;
 
     const selectedLocation = this.props.coffeeShops.reduce((locationObj, locationListItem) => {
@@ -64,14 +88,14 @@ class Results extends Component {
 
       return locationObj;
     }, {})
-    
+
     // if the selected location was previously loaded in state, just display the directions to prevent an unnecssary api call
     if (JSON.stringify(selectedLocation) === JSON.stringify(this.props.selectedCoffeeShop)) {
       this.setState({ displayDirections: true })
       return;
     }
 
-    this.props.dispatch({type: SET_DIRECTIONS_LOCATION, payload: selectedLocation})
+    this.props.dispatch({ type: SET_DIRECTIONS_LOCATION, payload: selectedLocation })
 
   }
 
@@ -87,12 +111,12 @@ class Results extends Component {
       const directions = results.data.route.legs[0].maneuvers;
 
       // map over directions array to get the narrative text of each direction
-      const directionsToCoffeeShop = directions.map(direction => {
+      const directionsToCoffeeShop: string[] = directions.map((direction: any) => {
         return direction.narrative;
       })
 
       // store the sessionId of the api call to use for the map of directions
-      const directionsSessionID = results.data.route.sessionId;
+      const directionsSessionID: string = results.data.route.sessionId;
 
       this.props.dispatch({
         type: SET_DIRECTIONS_INSTRUCTIONS,
@@ -114,41 +138,41 @@ class Results extends Component {
       });
     }
   }
-  
+
   render() {
     const { coffeeShops, radiusMap, directionsMap } = this.props;
 
     return (
       <>
-      {/* If there are coffeeShops then display the list of coffeeShops and the map */}
-      {
-        coffeeShops.length > 0 
-        ?
-        <div className='mapAndCoffeeShopBackground' id='mapAndResults'>
-          <div className='mapAndCoffeeShopContainer wrapper'>
-            <div className='map'>
-              {/* If state isLoading then display loader...otherise display the map */}
-              {
-                this.state.isLoading && <div className='spinnerContainer'><div className='loadingSpinner'></div></div> 
-              }
-              <img 
-                src={this.state.displayDirections ? directionsMap : radiusMap} 
-                onLoad={() => this.setState({isLoading: false})} 
-                alt='map of selected library and coffee shops' 
-              />
-            </div>
-            
-            { 
-              this.state.displayDirections 
-                ? <Directions handleBackButton={this.handleBackButton}/>  
-                : <CoffeeShopsList handleCoffeeShopSelected={this.handleCoffeeShopSelected}/>
-            } 
+        {/* If there are coffeeShops then display the list of coffeeShops and the map */}
+        {
+          coffeeShops.length > 0
+            ?
+            <div className='mapAndCoffeeShopBackground' id='mapAndResults'>
+              <div className='mapAndCoffeeShopContainer wrapper'>
+                <div className='map'>
+                  {/* If state isLoading then display loader...otherise display the map */}
+                  {
+                    this.state.isLoading && <div className='spinnerContainer'><div className='loadingSpinner'></div></div>
+                  }
+                  <img
+                    src={this.state.displayDirections ? directionsMap : radiusMap}
+                    onLoad={() => this.setState({ isLoading: false })}
+                    alt='map of selected library and coffee shops'
+                  />
+                </div>
 
-          </div>
-        </div>
-        : 
-        null
-      }
+                {
+                  this.state.displayDirections
+                    ? <Directions handleBackButton={this.handleBackButton} />
+                    : <CoffeeShopsList handleCoffeeShopSelected={this.handleCoffeeShopSelected} />
+                }
+
+              </div>
+            </div>
+            :
+            null
+        }
       </>
     )
   }

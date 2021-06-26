@@ -1,4 +1,5 @@
 import { GET_COFFEE_SHOPS, RANDOMIZE_COFFEE_SHOPS } from '../actions/types';
+import { CoffeeShop } from '../types/coffeeShop';
 
 const initialState = {
   all: [],
@@ -6,7 +7,12 @@ const initialState = {
   map: '',
 }
 
-const coffeeShopsReducer = (state = initialState, action) => {
+interface IAction {
+  type: string;
+  payload: CoffeeShop[];
+}
+
+const coffeeShopsReducer = (state = initialState, action: IAction) => {
   switch (action.type) {
     case GET_COFFEE_SHOPS:
       return action.payload

@@ -1,4 +1,5 @@
 import { SET_LIBRARY } from "../actions/types";
+import { Library } from "../types/library";
 
 const initialState = {
   name: '',
@@ -7,7 +8,12 @@ const initialState = {
   radius: ''
 }
 
-const libraryReducer = (state = initialState, action) => {
+interface IAction {
+  type: string;
+  payload: Library;
+}
+
+const libraryReducer = (state = initialState, action: IAction) => {
 
   switch (action.type) {
     case SET_LIBRARY:

@@ -1,12 +1,21 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 import { SET_DIRECTIONS_MODE } from '../actions/types';
 
-const mapStateToProps = state => ({
+import { Directions as DirectionsType } from '../types/directions';
+
+const mapStateToProps = (state: { directions: DirectionsType }) => ({
 	directions: state.directions
 });
 
-const Directions = (props) => {
+interface IProps {
+	directions: DirectionsType;
+	handleBackButton: () => void;
+	dispatch: Dispatch;
+}
+
+const Directions = (props: IProps) => {
 
 	const { directions, handleBackButton } = props;
 
@@ -24,14 +33,14 @@ const Directions = (props) => {
 					<p>Start</p>
 				</div>
 				<div className='directionMarkerContainer'>
-					<img src='https://assets.mapquestapi.com/icon/v2/marker-end.png' alt=''/>
+					<img src='https://assets.mapquestapi.com/icon/v2/marker-end.png' alt='' />
 					<p>End</p>
 				</div>
 			</div>
-			
+
 			<div className='modeOfTransportationInputContainer'>
 				<label htmlFor='modeOfTransportation'>Choose a mode of transportation:</label>
-				<select id='modeOfTransportation' value={directions.mode} onChange={(e) => props.dispatch({ type: SET_DIRECTIONS_MODE, payload: e.target.value})}>
+				<select id='modeOfTransportation' value={directions.mode} onChange={(e) => props.dispatch({ type: SET_DIRECTIONS_MODE, payload: e.target.value })}>
 					<option value='fastest'>Drive</option>
 					<option value='pedestrian'>Walk</option>
 					<option value='bicycle'>Bike</option>
@@ -43,7 +52,7 @@ const Directions = (props) => {
 				{directions.instructions.map((direction, index) => {
 					return (
 						<li key={index}>
-								{direction}
+							{direction}
 						</li>
 					);
 				})}

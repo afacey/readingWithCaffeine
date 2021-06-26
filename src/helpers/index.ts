@@ -1,8 +1,8 @@
-export function arraysAreEqual(arr1, arr2) {
+export function arraysAreEqual(arr1: any[], arr2: any[]) {
   if (!Array.isArray(arr1) || !Array.isArray(arr2)) return false;
   if (arr1.length !== arr2.length) return false;
 
-  for(let i = 0; i < arr1.length; i++) {
+  for (let i = 0; i < arr1.length; i++) {
     if (arr1[i] !== arr2[i]) {
       return false
     }
@@ -11,7 +11,7 @@ export function arraysAreEqual(arr1, arr2) {
   return true;
 }
 
-export function randomizeArrayItems(arr) {
+export function randomizeArrayItems(arr: any[]) {
   // creating a copy of the array to randomize and reduce to 10
   let randomArr = [...arr];
 

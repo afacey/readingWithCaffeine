@@ -1,3 +1,4 @@
+import { Directions } from '../types/directions';
 import { SET_DIRECTIONS_INSTRUCTIONS, SET_DIRECTIONS_LOCATION, SET_DIRECTIONS_MODE } from '../actions/types';
 
 const initialState = {
@@ -8,9 +9,14 @@ const initialState = {
   mode: 'fastest'
 }
 
-const directionsReducer = (state = initialState, action) => {
+interface IAction {
+  type: string;
+  payload: Directions
+}
 
-  switch(action.type) {
+const directionsReducer = (state = initialState, action: IAction) => {
+
+  switch (action.type) {
     case SET_DIRECTIONS_INSTRUCTIONS:
       return {
         ...state,
