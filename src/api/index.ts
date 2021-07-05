@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { CoffeeShop } from '../types/coffeeShop';
-import { CoffeeShopLocation, TransportationMode } from '../types/directions';
-import { Library } from '../types/library';
+import { TransportationMode } from '../types/direction';
+import { Location, Library } from '../types/location';
 
 const apiKey = 'dgYN9vqDVgOBOwNtvPlR14jKSxdi9dVa';
 
@@ -41,7 +41,7 @@ export const getCoffeeShops = ({ longitude, latitude, radius }: Library) => {
 }
 
 // getting directions from the selectedLibrary to the selectedCoffeeShop
-export const getSelectedTransportation = (library: Library, coffeeShop: CoffeeShopLocation, mode: TransportationMode) => {
+export const getSelectedTransportation = (library: Library, coffeeShop: Location, mode: TransportationMode) => {
   // api request to grab directions from the selectedLibrary to the selectedCoffeeShop
   return axios({
     url: 'https://www.mapquestapi.com/directions/v2/route',

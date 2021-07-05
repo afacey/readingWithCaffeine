@@ -1,4 +1,4 @@
-export function arraysAreEqual(arr1: any[], arr2: any[]) {
+export function arraysAreEqual<T, S>(arr1: T, arr2: S) {
   if (!Array.isArray(arr1) || !Array.isArray(arr2)) return false;
   if (arr1.length !== arr2.length) return false;
 
@@ -11,8 +11,7 @@ export function arraysAreEqual(arr1: any[], arr2: any[]) {
   return true;
 }
 
-export function randomizeArrayItems(arr: any[]) {
-  // creating a copy of the array to randomize and reduce to 10
+export function randomizeArrayItems<T>(arr: T[]) {
   let randomArr = [...arr];
 
   // standard fisher-yates randomizer to randomize entire array and prevent duplicates
@@ -24,5 +23,4 @@ export function randomizeArrayItems(arr: any[]) {
   }
 
   return randomArr;
-
 }

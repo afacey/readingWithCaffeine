@@ -1,9 +1,14 @@
-import { Directions } from '../types/directions';
+import { Direction } from '../types/direction';
 import { SET_DIRECTIONS_INSTRUCTIONS, SET_DIRECTIONS_LOCATION, SET_DIRECTIONS_MODE } from '../actions/types';
 
-const initialState = {
+const initialState: Direction = {
   session: '',
-  location: {},
+  location: {
+    name: '',
+    longitude: 0,
+    latitude: 0,
+    address: '',
+  },
   map: '',
   instructions: [],
   mode: 'fastest'
@@ -11,7 +16,7 @@ const initialState = {
 
 interface IAction {
   type: string;
-  payload: Directions
+  payload: Direction
 }
 
 const directionsReducer = (state = initialState, action: IAction) => {

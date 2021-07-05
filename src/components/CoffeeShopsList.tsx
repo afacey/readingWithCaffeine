@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { CoffeeShop, CoffeeShopsState } from '../types/coffeeShop';
-import { Library } from '../types/library';
+import { Library } from '../types/location';
 import marker from './../assets/marker.png';
 
 interface IMapStateToProps {

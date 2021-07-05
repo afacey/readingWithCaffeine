@@ -8,13 +8,13 @@ import { connect } from 'react-redux';
 import { SET_DIRECTIONS_INSTRUCTIONS, SET_DIRECTIONS_LOCATION } from '../actions/types';
 import { arraysAreEqual } from '../helpers';
 import { CoffeeShop, CoffeeShopsState } from '../types/coffeeShop';
-import { Library } from '../types/library';
-import { CoffeeShopLocation, Directions as DirectionsType, TransportationMode } from '../types/directions';
+import { Location, Library } from '../types/location';
+import { Direction, TransportationMode } from '../types/direction';
 import { Dispatch } from 'redux';
 
 interface IMapState {
   coffeeShops: CoffeeShopsState;
-  directions: DirectionsType;
+  directions: Direction;
   library: Library;
 }
 
@@ -32,7 +32,7 @@ interface IProps {
   radiusMap: string;
   directionsMap: string;
   selectedLibrary: Library;
-  selectedCoffeeShop: CoffeeShopLocation;
+  selectedCoffeeShop: Location;
   modeType: TransportationMode;
   dispatch: Dispatch;
 }
@@ -70,7 +70,7 @@ class Results extends Component<IProps, IState> {
   }
 
   // handle button click to go back to the list of surrounding coffeeShops
-  handleBackButton = () => this.setState({ displayDirections: false });
+  handleBackButton = () => this.setState({ displayDirections: false, isLoading: true });
 
   // handle when the user selects a coffee shop from the list to get the directions
   handleCoffeeShopSelected = (event: React.SyntheticEvent<HTMLButtonElement>) => {
@@ -80,14 +80,14 @@ class Results extends Component<IProps, IState> {
       if (locationListItem.id === selectedLocationId) {
         locationObj = {
           name: locationListItem.name,
-          longitude: locationListItem.place.geometry.coordinates[0],
-          latitude: locationListItem.place.geometry.coordinates[1],
+          longitude: +locationListItem.place.geometry.coordinates[0],
+          latitude: +locationListItem.place.geometry.coordinates[1],
           address: locationListItem.displayString.split(`${locationListItem.name}, `)[1]
         }
       }
 
       return locationObj;
-    }, {})
+    }, {}) as Location;
 
     // if the selected location was previously loaded in state, just display the directions to prevent an unnecssary api call
     if (JSON.stringify(selectedLocation) === JSON.stringify(this.props.selectedCoffeeShop)) {

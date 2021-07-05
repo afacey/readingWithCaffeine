@@ -3,14 +3,14 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { SET_DIRECTIONS_MODE } from '../actions/types';
 
-import { Directions as DirectionsType } from '../types/directions';
+import { Direction } from '../types/direction';
 
-const mapStateToProps = (state: { directions: DirectionsType }) => ({
+const mapStateToProps = (state: { directions: Direction }) => ({
 	directions: state.directions
 });
 
 interface IProps {
-	directions: DirectionsType;
+	directions: Direction;
 	handleBackButton: () => void;
 	dispatch: Dispatch;
 }

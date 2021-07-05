@@ -1,11 +1,11 @@
 import { SET_LIBRARY } from "../actions/types";
-import { Library } from "../types/library";
+import { Library } from "../types/location";
 
-const initialState = {
+const initialState: Library = {
   name: '',
-  latitude: '',
-  longitude: '',
-  radius: ''
+  latitude: 0,
+  longitude: 0,
+  radius: 0,
 }
 
 interface IAction {

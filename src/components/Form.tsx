@@ -3,9 +3,9 @@ import Swal from 'sweetalert2';
 import * as api from '../api';
 
 import { connect } from 'react-redux';
-import { getCoffeeShops, randomizeCoffeeShops } from '../actions/libraryActions';
+import { getCoffeeShops, randomizeCoffeeShops } from '../actions';
 
-import { Library } from '../types/library';
+import { Library } from '../types/location';
 import { CoffeeShopsState } from '../types/coffeeShop';
 import { Dispatch } from 'redux';
 
@@ -29,6 +29,8 @@ interface IState {
 }
 
 class Form extends Component<IProps, IState> {
+  libraryInputRef: React.RefObject<HTMLInputElement>;
+
   constructor(props: IProps) {
     super(props);
     this.state = {
@@ -38,16 +40,16 @@ class Form extends Component<IProps, IState> {
       autoComplete: [],
       showSuggestions: false
     }
+
+    this.libraryInputRef = React.createRef()
   }
 
   // method to handle library input change
   handleLibraryInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // if auto complete list is not showing update state to true
     if (!this.state.showSuggestions) {
       this.setState({ showSuggestions: true });
     }
 
-    // store user input to set in state
     const libraryInput = event.target.value;
 
     // prevent unnecessary api calls if no results are found with previous input
@@ -56,12 +58,9 @@ class Form extends Component<IProps, IState> {
       return;
     }
 
-    // update state with the libraryInput
-    // then call api to get search ahead (predictive) results
     this.setState({ libraryInput }, this.getPredictiveSearch);
   };
 
-  // handle the user's input for the selected distance (radius)
   handleRadiusSelected = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedRadius = parseInt(event.target.value, 10);
     this.setState({
@@ -69,7 +68,6 @@ class Form extends Component<IProps, IState> {
     });
   };
 
-  // make api call to get prective search of user's search input
   getPredictiveSearch = () => {
     const { libraryInput } = this.state;
 
@@ -77,11 +75,9 @@ class Form extends Component<IProps, IState> {
 
       api.getPredictiveSearch(libraryInput)
         .then((res) => {
-          //update autoComplete state with the returned search ahead results
           this.setState({ autoComplete: [...res.data.results] });
         })
         .catch(error => {
-          // if there's an error with the api call display an alert
           Swal.fire({
             title: 'Oops!',
             text: `There was an error! ${error}. Try searching at a later time.`,
@@ -89,8 +85,7 @@ class Form extends Component<IProps, IState> {
             confirmButtonText: 'OK',
           })
         })
-    } else if (libraryInput.length < 3) {
-      // if libraryInput is less than 3 hide the autocomplete results
+    } else {
       this.setState({ showSuggestions: false });
     }
   }
@@ -135,7 +130,6 @@ class Form extends Component<IProps, IState> {
 
   // method to handle user submitting the library name and distance to find surrounding coffee shops
   handleFormSubmit = (event: React.SyntheticEvent) => {
-    // prevent form from refreshing page on submit
     event.preventDefault();
 
     if (this.validateFormValues()) {
@@ -165,7 +159,6 @@ class Form extends Component<IProps, IState> {
 
   // method to handle the user selecting (onClick) an autocomplete result
   handleLibraryInputSelected = (event: React.SyntheticEvent<HTMLButtonElement>) => {
-    // store the value of the autocomplete for later
     const target = event.target as HTMLButtonElement;
     const userSelectedLibrary = target.value;
 
@@ -178,7 +171,7 @@ class Form extends Component<IProps, IState> {
     const address = displayString.split(`${name}, `)[1];
 
     // store the library's name, latitude, and longitude in object
-    const selectedLibrary = {
+    const selectedLibrary: Library = {
       name,
       latitude,
       longitude,
@@ -193,14 +186,45 @@ class Form extends Component<IProps, IState> {
 
   };
 
+  getAutoComplete = () => {
+    const { showSuggestions, autoComplete } = this.state;
+
+    return showSuggestions ?
+      (<ul className='inputLocationAutoComplete'>
+        {
+          autoComplete.length
+            ?
+            autoComplete.map((results) => {
+              return (
+                <li key={results.id} className='autoCompleteResults'>
+                  <button
+                    type='button'
+                    key={results.id}
+                    onClick={this.handleLibraryInputSelected}
+                    value={results.name}
+                  >
+                    {results.name}
+                  </button>
+                </li>
+              );
+            })
+            : <li className='autoCompleteResults'>
+              <button type='button' onClick={this.clearSearch}>No results found. Click to clear search.</button>
+            </li>
+        }
+      </ul>)
+      : null;
+  }
+
+  clearSearch = () => this.setState({ libraryInput: '', showSuggestions: false }, () => this.libraryInputRef.current?.focus());
+
   render() {
-    const { handleLibraryInputChange, handleRadiusSelected, handleFormSubmit, handleLibraryInputSelected } = this;
-    const { libraryInput, selectedRadius, showSuggestions, autoComplete } = this.state;
+    const { libraryInputRef, handleLibraryInputChange, handleRadiusSelected, handleFormSubmit, getAutoComplete } = this;
+    const { libraryInput, selectedRadius } = this.state;
 
     return (
       <form id='form' action='submit'>
         <div className='formTopSection'>
-
           <label htmlFor='inputLocation'>Find Library</label>
           <div className='inputLocationContainer'>
             <input
@@ -211,34 +235,9 @@ class Form extends Component<IProps, IState> {
               onChange={handleLibraryInputChange}
               placeholder=''
               autoComplete='off'
+              ref={libraryInputRef}
             />
-
-            {/* displaying autocomplete results / event handler on click */}
-            {showSuggestions &&
-              // if showSuggestions is true then display the list of autoCompleteResults
-              <ul className='inputLocationAutoComplete'>
-                {
-                  autoComplete.length
-                    ?
-                    autoComplete.map((results) => {
-                      return (
-                        <li key={results.id} className='autoCompleteResults'>
-                          <button
-                            type='button'
-                            key={results.id}
-                            onClick={handleLibraryInputSelected}
-                            value={results.name}
-                          >
-                            {results.name}
-                          </button>
-                        </li>
-                      );
-                    })
-                    : <li className='autoCompleteResults'>
-                      <button type='button' onClick={() => this.setState({ libraryInput: '', showSuggestions: false })}>No results found. Click to clear search.</button>
-                    </li>
-                }
-              </ul>}
+            {getAutoComplete()}
           </div>
         </div>
 
@@ -256,15 +255,11 @@ class Form extends Component<IProps, IState> {
             autoComplete='off'
             required
           />
-
           <button className='formSubmitButton' type='submit' onClick={handleFormSubmit}>Go</button>
-
         </div>
-
       </form>
     );
   }
 }
 
-// export default Form;
 export default connect(mapStateToProps)(Form);
