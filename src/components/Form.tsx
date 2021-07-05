@@ -26,6 +26,7 @@ interface IState {
   selectedRadius: number;
   autoComplete: any[];
   showSuggestions: boolean;
+  noResultsAtChar: number | null;
 }
 
 class Form extends Component<IProps, IState> {
@@ -38,7 +39,8 @@ class Form extends Component<IProps, IState> {
       selectedLibrary: null,
       selectedRadius: 5,
       autoComplete: [],
-      showSuggestions: false
+      showSuggestions: false,
+      noResultsAtChar: null,
     }
 
     this.libraryInputRef = React.createRef()
@@ -46,19 +48,19 @@ class Form extends Component<IProps, IState> {
 
   // method to handle library input change
   handleLibraryInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!this.state.showSuggestions) {
-      this.setState({ showSuggestions: true });
-    }
-
     const libraryInput = event.target.value;
+    const { noResultsAtChar } = this.state;
 
     // prevent unnecessary api calls if no results are found with previous input
-    if (libraryInput.length > 3 && this.state.autoComplete.length === 0) {
-      this.setState({ libraryInput })
-      return;
+    if (noResultsAtChar) {
+      if (libraryInput.length < noResultsAtChar) {
+        this.setState({ libraryInput, noResultsAtChar: null }, this.getPredictiveSearch);
+      } else {
+        this.setState({ libraryInput })
+      }
+    } else {
+      this.setState({ libraryInput }, this.getPredictiveSearch);
     }
-
-    this.setState({ libraryInput }, this.getPredictiveSearch);
   };
 
   handleRadiusSelected = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,12 +72,17 @@ class Form extends Component<IProps, IState> {
 
   getPredictiveSearch = () => {
     const { libraryInput } = this.state;
-
-    if (libraryInput?.length >= 3 && libraryInput?.length < 25) {
-
+    
+    if (libraryInput?.length >= 3) {
       api.getPredictiveSearch(libraryInput)
         .then((res) => {
-          this.setState({ autoComplete: [...res.data.results] });
+          const { results } = res.data;
+          
+          this.setState({
+            showSuggestions: true,
+            autoComplete: [...results],
+            noResultsAtChar: results.length === 0 ? libraryInput.length : null,
+          });
         })
         .catch(error => {
           Swal.fire({
@@ -216,7 +223,7 @@ class Form extends Component<IProps, IState> {
       : null;
   }
 
-  clearSearch = () => this.setState({ libraryInput: '', showSuggestions: false }, () => this.libraryInputRef.current?.focus());
+  clearSearch = () => this.setState({ libraryInput: '', showSuggestions: false, noResultsAtChar: null }, () => this.libraryInputRef.current?.focus());
 
   render() {
     const { libraryInputRef, handleLibraryInputChange, handleRadiusSelected, handleFormSubmit, getAutoComplete } = this;
